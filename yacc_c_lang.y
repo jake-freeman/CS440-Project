@@ -289,12 +289,14 @@ translation_unit
 %%
 #include <stdio.h>
 
-/*extern char yytext[];
-extern int column;
+extern char yytext[];
 
-yyerror(s)
-char *s;
+void yyerror(const char *str)
 {
-  fflush(stdout);
-  printf("\n%*s\n%*s\n", column, "^", column, s);
-}*/
+    fprintf(stderr,"error: %s\n",str);
+}
+
+int main()
+{
+    yyparse();
+}
