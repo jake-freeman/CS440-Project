@@ -16,6 +16,9 @@
 "else"      { printf("ELSE ");     return(ELSE); }
 "return"    { printf("RETURN ");   return(RETURN); }
 
+ /* Ignore single line comments */
+\/\/.* { }
+
  /* any identifier name */
 [a-zA-Z_]([a-zA-Z_]|[0-9])* { printf("INDENTIFIER "); return(IDENTIFIER); }
 
@@ -53,7 +56,7 @@
 "!="   { printf("NE_OP ");        return(NE_OP); }
 
  /* single chars */
-";"    { printf("; "); return(';'); }
+";"    { printf(";\n"); return(';'); }
 "{"    { printf("{ "); return('{'); }
 "}"    { printf("} "); return('}'); }
 ","    { printf(", "); return(','); }

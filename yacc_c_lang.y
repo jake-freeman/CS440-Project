@@ -282,7 +282,7 @@ declaration_statement
 
 translation_unit
   : declaration_statement
-  | translation_unit declaration
+  | translation_unit declaration_statement
   ;
 
 
@@ -298,5 +298,7 @@ void yyerror(const char *str)
 
 int main()
 {
+    // debugging flag
+    yydebug = 1;
     yyparse();
 }
