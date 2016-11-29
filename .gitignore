@@ -1,9 +1,10 @@
 # YACC and lex stuff
+*.o
 lex.yy.c
-y.tab.c
-y.tab.h
-y.output
+*.tab.*
 c_lang
+*.output
 
 # testing files
 test*.*
+!test.sh
