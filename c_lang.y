@@ -1,11 +1,11 @@
-%token IDENTIFIER CONSTANT
+%token IDENTIFIER I_CONST F_CONST
 %token PTR_OP INC_OP DEC_OP LEFT_OP RIGHT_OP LE_OP GE_OP EQ_OP NE_OP
 %token AND_OP OR_OP MUL_ASSIGN DIV_ASSIGN MOD_ASSIGN ADD_ASSIGN
 %token SUB_ASSIGN LEFT_ASSIGN RIGHT_ASSIGN AND_ASSIGN
 %token XOR_ASSIGN OR_ASSIGN
 
 %token TYPEDEF EXTERN STATIC AUTO REGISTER
-%token INT LONG SIGNED UNSIGNED FLOAT CONST
+%token INT SIGNED UNSIGNED FLOAT KEY_CONST
 
 %token IF ELSE RETURN
 
@@ -17,7 +17,8 @@
 
 primary_expression
   : IDENTIFIER
-  | CONSTANT
+  | I_CONST
+  | F_CONST
   | '(' expression ')'
   ;
 
@@ -188,8 +189,8 @@ pointer
   ;
 
 type_qualifier_list
-  : CONST
-  | type_qualifier_list CONST
+  : KEY_CONST
+  | type_qualifier_list KEY_CONST
   ;
 
 

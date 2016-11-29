@@ -6,15 +6,15 @@
 
 %%
  /* keywords */
-"int"       { printf("INT ");      return(INT); }
-"float"     { printf("FLOAT ");    return(FLOAT); }
-"signed"    { printf("SIGNED ");   return(SIGNED); }
-"unsigned"  { printf("UNSIGNED "); return(UNSIGNED); }
-"const"     { printf("CONST ");    return(CONST); }
-"static"    { printf("STATIC ");   return(STATIC); }
-"if"        { printf("IF ");       return(IF); }
-"else"      { printf("ELSE ");     return(ELSE); }
-"return"    { printf("RETURN ");   return(RETURN); }
+"int"       { printf("INT ");       return(INT); }
+"float"     { printf("FLOAT ");     return(FLOAT); }
+"signed"    { printf("SIGNED ");    return(SIGNED); }
+"unsigned"  { printf("UNSIGNED ");  return(UNSIGNED); }
+"const"     { printf("KEY_CONST "); return(KEY_CONST); }
+"static"    { printf("STATIC ");    return(STATIC); }
+"if"        { printf("IF ");        return(IF); }
+"else"      { printf("ELSE ");      return(ELSE); }
+"return"    { printf("RETURN ");    return(RETURN); }
 
  /* Ignore single line comments */
 \/\/.* { }
@@ -22,15 +22,14 @@
  /* any identifier name */
 [a-zA-Z_]([a-zA-Z_]|[0-9])* { printf("INDENTIFIER "); return(IDENTIFIER); }
 
- /* integer constant [TODO]: differentiate constant types */
-0[xX][a-fA-F0-9]+  { printf("CONSTANT "); return(CONSTANT); }
-0[0-9]+            { printf("CONSTANT "); return(CONSTANT); }
-[0-9]+             { printf("CONSTANT "); return(CONSTANT); }
+ /* integer constant */
+0[xX][a-fA-F0-9]+  { printf("I_CONST "); return(I_CONST); }
+[0-9]+             { printf("I_CONST "); return(I_CONST); }
 
- /* floating point constant [TODO]: differentiate constant types */
-[0-9]+[Ee][+-]?[0-9]+              { printf("CONSTANT "); return(CONSTANT); }
-[0-9]*"."[0-9]+([Ee][+-]?[0-9]+)?  { printf("CONSTANT "); return(CONSTANT); }
-[0-9]+"."[0-9]*([Ee][+-]?[0-9]+)?  { printf("CONSTANT "); return(CONSTANT); }
+ /* floating point constant */
+[0-9]+[Ee][+-]?[0-9]+              { printf("F_CONST "); return(F_CONST); }
+[0-9]*"."[0-9]+([Ee][+-]?[0-9]+)?  { printf("F_CONST "); return(F_CONST); }
+[0-9]+"."[0-9]*([Ee][+-]?[0-9]+)?  { printf("F_CONST "); return(F_CONST); }
 
  /* compound assignment and modification operators */
 ">>="  { printf("RIGHT_ASSIGN "); return(RIGHT_ASSIGN); }
@@ -57,8 +56,8 @@
 
  /* single chars */
 ";"    { printf(";\n"); return(';'); }
-"{"    { printf("{ "); return('{'); }
-"}"    { printf("} "); return('}'); }
+"{"    { printf("{\n"); return('{'); }
+"}"    { printf("}\n"); return('}'); }
 ","    { printf(", "); return(','); }
 ":"    { printf(": "); return(':'); }
 "="    { printf("= "); return('='); }
