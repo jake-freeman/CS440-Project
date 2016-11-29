@@ -14,7 +14,6 @@
 "static"    { printf("STATIC ");    return(STATIC); }
 "if"        { printf("IF ");        return(IF); }
 "else"      { printf("ELSE ");      return(ELSE); }
-"return"    { printf("RETURN ");    return(RETURN); }
 
  /* Ignore single line comments */
 \/\/.* { }

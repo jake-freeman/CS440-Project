@@ -1,3 +1,22 @@
+%{
+  #include <stdio.h>
+  #include <stdlib.h>
+  #include <string.h>
+
+  typedef struct node
+  {
+      struct node *left;
+      struct node *right;
+      char *token;
+  } node;
+
+  node *mknode(char *token, node *left, node *right);
+  void printtree(node *tree);
+
+  node* head;
+
+  #define YYSTYPE struct node *
+%}
 %token IDENTIFIER I_CONST F_CONST
 %token PTR_OP INC_OP DEC_OP LEFT_OP RIGHT_OP LE_OP GE_OP EQ_OP NE_OP
 %token AND_OP OR_OP MUL_ASSIGN DIV_ASSIGN MOD_ASSIGN ADD_ASSIGN
@@ -7,7 +26,7 @@
 %token TYPEDEF EXTERN STATIC AUTO REGISTER
 %token INT SIGNED UNSIGNED FLOAT KEY_CONST
 
-%token IF ELSE RETURN
+%token IF ELSE
 
 %nonassoc LOWER_THAN_ELSE
 %nonassoc ELSE
@@ -140,8 +159,8 @@ constant_expression
   ;
 
 declaration
-  : declaration_specifiers ';'
-  | declaration_specifiers init_declarator_list ';'
+  : declaration_specifiers ';' { $$ = mknode( "declaration_specifiers", $1, NULL ); }
+  | declaration_specifiers init_declarator_list ';' { $$ = mknode( "declaration", $1, $2 ); }
   ;
 
 declaration_specifiers
@@ -257,18 +276,18 @@ compound_statement
   ;
 
 declaration_list
-  : declaration
-  | declaration_list declaration
+  : declaration { $$ = mknode( "declaration", $1, NULL ); }
+  | declaration_list declaration { $$ = mknode( "declaration", $1, $2 ); }
   ;
 
 statement_list
-  : statement
-  | statement_list statement
+  : statement { $$ = mknode( "statement", $1, NULL ); }
+  | statement_list statement { $$ = mknode( "statement_list", $1, $2 ); }
   ;
 
 expression_statement
   : ';'
-  | expression ';'
+  | expression ';' { $$ = mknode( "expression", $1, NULL ); }
   ;
 
 selection_statement
@@ -277,18 +296,51 @@ selection_statement
   ;
 
 declaration_statement
-  : declaration
-  | statement
+  : declaration { $$ = mknode( "declaration", $1, NULL ); }
+  | statement   { $$ = mknode( "statement", $1, NULL ); }
   ;
 
 translation_unit
-  : declaration_statement
+  : declaration_statement { $$ = mknode( "root_declaration_statement", $1, NULL ); }
   | translation_unit declaration_statement
+  {
+    node *new_head = ($$ = mknode( "translation_unit", $1, $2 ));
+    head ?  : (head = new_head);
+  }
   ;
 
 
 %%
-#include <stdio.h>
+
+node *mknode(char *token, node *left, node *right)
+{
+  /* malloc the node */
+  node *newnode = (node *)malloc(sizeof(node));
+  char *newstr = (char *)malloc(strlen(token)+1);
+  strcpy(newstr, token);
+  newnode->left = left;
+  newnode->right = right;
+  newnode->token = newstr;
+  return(newnode);
+}
+
+void printtree(node *tree)
+{
+  int i;
+
+  if (tree->left || tree->right)
+    printf("(");
+
+  printf(" %s ", tree->token);
+
+  if (tree->left)
+    printtree(tree->left);
+  if (tree->right)
+    printtree(tree->right);
+
+  if (tree->left || tree->right)
+    printf(")");
+}
 
 extern char yytext[];
 
@@ -301,5 +353,12 @@ int main()
 {
     // debugging flag
     yydebug = 1;
-    yyparse();
+    if (yyparse() == 0) {
+      printtree(head);
+      printf("\n");
+      return 0;
+    }
+    else {
+      return 1;
+    }
 }
