@@ -25,8 +25,8 @@ struct Info {  int intval; float floatval; int type; };
 
 primary_expression
   : IDENTIFIER
-  | I_CONST
-  | F_CONST
+  | I_CONST {$<info.ival>$ = $1; $<info.type>$ = 1; }
+  | F_CONST {$<info.fval>$ = $1; $<info.type>$ = 2; }
   | '(' expression ')'
   ;
 
