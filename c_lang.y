@@ -194,8 +194,6 @@ direct_declarator
   | '(' declarator ')' { $$ = mknode( "(declarator)", $2, NULL ); }
   | direct_declarator '[' constant_expression ']'
   | direct_declarator '[' ']'
-  | direct_declarator '(' parameter_type_list ')'
-  | direct_declarator '(' identifier_list ')'
   | direct_declarator '(' ')'
   ;
 
@@ -211,44 +209,6 @@ type_qualifier_list
   | type_qualifier_list KEY_CONST
   ;
 
-
-parameter_type_list
-  : parameter_list
-  ;
-
-parameter_list
-  : parameter_declaration
-  | parameter_list ',' parameter_declaration
-  ;
-
-parameter_declaration
-  : declaration_specifiers declarator
-  | declaration_specifiers abstract_declarator
-  | declaration_specifiers
-  ;
-
-identifier_list
-  : IDENTIFIER
-  | identifier_list ',' IDENTIFIER
-  ;
-
-abstract_declarator
-  : pointer
-  | direct_abstract_declarator
-  | pointer direct_abstract_declarator
-  ;
-
-direct_abstract_declarator
-  : '(' abstract_declarator ')'
-  | '[' ']'
-  | '[' constant_expression ']'
-  | direct_abstract_declarator '[' ']'
-  | direct_abstract_declarator '[' constant_expression ']'
-  | '(' ')'
-  | '(' parameter_type_list ')'
-  | direct_abstract_declarator '(' ')'
-  | direct_abstract_declarator '(' parameter_type_list ')'
-  ;
 
 initializer
   : assignment_expression { $$ = mknode( "assignment_expression", $1, NULL ); }
