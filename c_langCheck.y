@@ -9,7 +9,7 @@
     float fval;
     struct Info info;
 }
-
+%token IDENTIFIER
 %token <ival> I_CONST
 %token <fval> F_CONST
 
@@ -106,7 +106,8 @@ multiplicative_expression
 
 additive_expression
   : multiplicative_expression
-  | additive_expression '+' multiplicative_expression  {  if ($<info.type>1 == 1 && $<info.type>3 == 1){
+  | additive_expression '+' multiplicative_expression  {
+                                                          if ($<info.type>1 == 1 && $<info.type>3 == 1){
                                                              $<info.type>$ = 1;
                                                              $<info.ival>$  = $<info.ival>1 + $<info.ival>3;
                                                           }
@@ -116,6 +117,7 @@ additive_expression
                                                           }
                                                           if ($<info.type>1 == 1 && $<info.type>3 == 2) {
                                                               yyerror("Type mismatch: adding int and float.");
+                                                              
                                                           }
                                                           if ($<info.type>1 == 2 && $<info.type>3 == 1) {
                                                               yyerror("Type mismatch: adding float and int.");
@@ -124,7 +126,7 @@ additive_expression
   | additive_expression '-' multiplicative_expression  { if ($<info.type>1 == 1 && $<info.type>3 == 1){
                                                           $<info.type>$ = 1;
                                                           $<info.ival>$  = $<info.ival>1 - $<info.ival>3;
-                                                      }
+                                                        }
                                                         if ($<info.type>1 == 2 && $<info.type>3 == 2) {
                                                            $<info.type>$ = 2;
                                                            $<info.fval>$ = $<info.fval>1 - $<info.fval>3;
@@ -247,7 +249,21 @@ init_declarator_list
 
 init_declarator
   : declarator
-  | declarator '=' initializer
+  | declarator '=' initializer { if ($<info.type>1 == 1 && $<info.type>3 == 1){
+                                      $<info.type>$ = 1;
+                                      $<info.ival>$  = $<info.ival>3;
+                                  }
+                                  if ($<info.type>1 == 2 && $<info.type>3 == 2) {
+                                       $<info.type>$ = 2;
+                                       $<info.fval>$ = $<info.fval>3;
+                                  }
+                                  if ($<info.type>1 == 1 && $<info.type>3 == 2) {
+                                        yyerror("Type mismatch: assignment float to int.");
+                                  }
+                                  if ($<info.type>1 == 2 && $<info.type>3 == 1) {
+                                        yyerror("Type mismatch: assignment int to float.");
+                                  }
+                                }
   ;
 
 type_specifier
@@ -383,7 +399,7 @@ translation_unit
 extern char yytext[];
 void yyerror(const char *str)
 {
-    fprintf(stderr,"error: %s\n",str);
+    fprintf(stderr,"error: %s\n",str,__LINE__);
 }
 int main()
 {
