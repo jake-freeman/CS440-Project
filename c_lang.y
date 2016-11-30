@@ -153,10 +153,6 @@ expression
   | expression ',' assignment_expression  { $$ = mknode( "expression, assignment_expression", $1, $3 ); }
   ;
 
-constant_expression
-  : conditional_expression
-  ;
-
 declaration
   : declaration_specifiers ';' { $$ = mknode( "declaration_specifiers", $1, NULL ); }
   | declaration_specifiers init_declarator_list ';' { $$ = mknode( "declaration", $1, $2 ); }
@@ -192,9 +188,8 @@ declarator
 direct_declarator
   : IDENTIFIER { $$ = mknode( "IDENTIFIER", NULL, NULL ); }
   | '(' declarator ')' { $$ = mknode( "(declarator)", $2, NULL ); }
-  | direct_declarator '[' constant_expression ']'
-  | direct_declarator '[' ']'
-  | direct_declarator '(' ')'
+  | direct_declarator '[' conditional_expression ']' { $$ = mknode( "array declarator", $1, $3 ); }
+  | direct_declarator '[' ']' { $$ = mknode( "declarator[]", $1, NULL ); }
   ;
 
 pointer
@@ -250,8 +245,8 @@ expression_statement
   ;
 
 selection_statement
-  : IF '(' expression ')' statement %prec LOWER_THAN_ELSE  { $$ = mknode( "IF", $3, $5 ); }
-  | IF '(' expression ')' statement ELSE statement
+  : IF '(' expression ')' statement %prec LOWER_THAN_ELSE  { $$ = mknode( "IF", $3, mknode( "THEN", $5, NULL ) ); }
+  | IF '(' expression ')' statement ELSE statement { $$ = mknode( "IF", $3, mknode( "THEN", $5, mknode( "ELSE", $7, NULL )) ); }
   ;
 
 declaration_statement
@@ -311,7 +306,23 @@ int main()
 {
     // debugging flag
     yydebug = 1;
+    char *stars_long  = "********************************",
+         *stars_short = "******";
+    printf("\n%s\n%s   Scanner Output   %s\n%s   (token stream)   %s\n%s\n\n",
+           stars_long,
+           stars_short,
+           stars_short,
+           stars_short,
+           stars_short,
+           stars_long);
     if (yyparse() == 0) {
+      printf("\n%s\n%s   Parser Output    %s\n%s       (AST)        %s\n%s\n\n",
+             stars_long,
+             stars_short,
+             stars_short,
+             stars_short,
+             stars_short,
+             stars_long);
       printtree(head);
       printf("\n");
       return 0;
