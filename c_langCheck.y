@@ -1,8 +1,14 @@
-%
-struct Info {  int intval; float floatval; int type; };
-%
+%union{
+    struct Info{
+      int ival;
+      float fval;
+      int type;
+    };
 
-%union{    int ival;    float fval;    struct Info info; }
+    int ival;
+    float fval;
+    struct Info info;
+}
 
 %token <ival> I_CONST
 %token <fval> F_CONST
@@ -58,53 +64,76 @@ unary_operator
 
 multiplicative_expression
   : unary_expression
-  | multiplicative_expression '*' unary_expression { if ($<info.type>1 == 1 && $<info.type>3 == 1){
+  | multiplicative_expression '*' unary_expression {  if ($<info.type>1 == 1 && $<info.type>3 == 1){
                                                           $<info.type>$ = 1;
                                                           $<info.ival>$ = $<info.ival>1 * $<info.ival>3;
                                                       }
                                                       if ($<info.type>1 == 2 && $<info.type>3 == 2) {
-                                                           $<info.type>$ = 2;
-                                                           $<info.fval>$ = $<info.fval>1 * $<info.fval>3;
-                                                        }
-                                                     }
-  | multiplicative_expression '/' unary_expression  { if ($<info.type>1 == 1 && $<info.type>3 == 1){
-                                                          $<info.type>$ = 1;
-                                                          $<info.ival>$ = $<info.ival>1 / $<info.ival>3;
+                                                          $<info.type>$ = 2;
+                                                          $<info.fval>$ = $<info.fval>1 * $<info.fval>3;
                                                       }
-                                                      if ($<info.type>1 == 2 && $<info.type>3 == 2) {
-                                                           $<info.type>$ = 2;
-                                                           $<info.fval>$ = $<info.fval>1 / $<info.fval>3;
+                                                      if ($<info.type>1 == 1 && $<info.type>3 == 2) {
+                                                          yyerror("Type mismatch: multiplying int by float.");
+                                                      }
+                                                      if ($<info.type>1 == 2 && $<info.type>3 == 1) {
+                                                          yyerror("Type mismatch: multiplying float by int.");
+                                                      }
+                                                   }
+  | multiplicative_expression '/' unary_expression  {   if ($<info.type>1 == 1 && $<info.type>3 == 1){
+                                                            $<info.type>$ = 1;
+                                                            $<info.ival>$ = $<info.ival>1 / $<info.ival>3;
+                                                        }
+                                                        if ($<info.type>1 == 2 && $<info.type>3 == 2) {
+                                                             $<info.type>$ = 2;
+                                                             $<info.fval>$ = $<info.fval>1 / $<info.fval>3;
+                                                        }
+                                                        if ($<info.type>1 == 1 && $<info.type>3 == 2) {
+                                                            yyerror("Type mismatch: dividing int by float.");
+                                                        }
+                                                        if ($<info.type>1 == 2 && $<info.type>3 == 1) {
+                                                            yyerror("Type mismatch: dividing float by int.");
                                                         }
                                                      }
   | multiplicative_expression '%' unary_expression  { if ($<info.type>1 == 1 && $<info.type>3 == 1){
                                                           $<info.type>$ = 1;
                                                           $<info.ival>$ = $<info.ival>1 % $<info.ival>3;
                                                       }
-                                                      if ($<info.type>1 == 2 && $<info.type>3 == 2) {
-                                                           $<info.type>$ = 2;
-                                                           $<info.fval>$ = $<info.fval>1 % $<info.fval>3;
-                                                        }
+                                                      if ($<info.type>1 == 2 || $<info.type>3 == 2) {
+                                                          yyerror("Type mismatch: modulus operation on float.");
+                                                      }
                                                      }
   ;
 
 additive_expression
   : multiplicative_expression
-  | additive_expression '+' multiplicative_expression  { if ($<info.type>1 == 1 && $<info.type>3 == 1){
-                                                          $<info.type>$ = 1;
-                                                          $<info.ival>$  = $<info.ival>1 + $<info.ival>3;
-                                                      }
-                                                      if ($<info.type>1 == 2 && $<info.type>3 == 2) {
-                                                           $<info.type>$ = 2;
-                                                           $<info.fval>$   = $<info.fval>1 + $<info.fval>3;
-                                                        }
+  | additive_expression '+' multiplicative_expression  {  if ($<info.type>1 == 1 && $<info.type>3 == 1){
+                                                             $<info.type>$ = 1;
+                                                             $<info.ival>$  = $<info.ival>1 + $<info.ival>3;
+                                                          }
+                                                          if ($<info.type>1 == 2 && $<info.type>3 == 2) {
+                                                             $<info.type>$ = 2;
+                                                             $<info.fval>$   = $<info.fval>1 + $<info.fval>3;
+                                                          }
+                                                          if ($<info.type>1 == 1 && $<info.type>3 == 2) {
+                                                              yyerror("Type mismatch: adding int and float.");
+                                                          }
+                                                          if ($<info.type>1 == 2 && $<info.type>3 == 1) {
+                                                              yyerror("Type mismatch: adding float and int.");
+                                                          }
                                                      }
   | additive_expression '-' multiplicative_expression  { if ($<info.type>1 == 1 && $<info.type>3 == 1){
                                                           $<info.type>$ = 1;
                                                           $<info.ival>$  = $<info.ival>1 - $<info.ival>3;
                                                       }
-                                                      if ($<info.type>1 == 2 && $<info.type>3 == 2) {
+                                                        if ($<info.type>1 == 2 && $<info.type>3 == 2) {
                                                            $<info.type>$ = 2;
                                                            $<info.fval>$ = $<info.fval>1 - $<info.fval>3;
+                                                        }
+                                                        if ($<info.type>1 == 1 && $<info.type>3 == 2) {
+                                                            yyerror("Type mismatch: subtracting float from int.");
+                                                        }
+                                                        if ($<info.type>1 == 2 && $<info.type>3 == 1) {
+                                                            yyerror("Type mismatch: subtracting int from float.");
                                                         }
                                                      }
   ;
@@ -161,13 +190,19 @@ conditional_expression
 
 assignment_expression
   : conditional_expression
-  | unary_expression assignment_operator assignment_expression { if ($<info.type>3 == 1){
+  | unary_expression assignment_operator assignment_expression { if ($<info.type>1 == 1 && $<info.type>3 == 1){
                                                           $<info.type>$ = 1;
                                                           $<info.ival>$  = $<info.ival>3;
                                                       }
                                                       if ($<info.type>1 == 2 && $<info.type>3 == 2) {
                                                            $<info.type>$ = 2;
                                                            $<info.fval>$ = $<info.fval>3;
+                                                        }
+                                                        if ($<info.type>1 == 1 && $<info.type>3 == 2) {
+                                                            yyerror("Type mismatch: assignment float to int.");
+                                                        }
+                                                        if ($<info.type>1 == 2 && $<info.type>3 == 1) {
+                                                            yyerror("Type mismatch: assignment int to float.");
                                                         }
                                                      }
   ;
@@ -346,9 +381,6 @@ translation_unit
 %%
 #include <stdio.h>
 extern char yytext[];
-void mismatch(const char *str){//not yet implemented
-    fprintf("Type mismatch %s\n",str);
-}
 void yyerror(const char *str)
 {
     fprintf(stderr,"error: %s\n",str);
