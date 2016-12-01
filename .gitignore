@@ -3,6 +3,7 @@
 lex.yy.c
 *.tab.*
 c_lang
+c_langCheck
 *.output
 
 # testing files

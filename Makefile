@@ -11,8 +11,8 @@ TARGET2 = c_lang
 $(TARGET): y.tab.o lex.yy.o
 	$(CC) -o $(TARGET) y.tab.o lex.yy.o
 
-	$(TARGET2): y.tab.o lex.yy.o
-		$(CC) -o $(TARGET2) y.tab.o lex.yy.o
+$(TARGET2): y.tab.o lex.yy.o
+	$(CC) -o $(TARGET2) y.tab.o lex.yy.o
 
 lex.yy.o: lex.yy.c y.tab.h
 
