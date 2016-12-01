@@ -22,13 +22,13 @@
 [a-zA-Z_]([a-zA-Z_]|[0-9])* { printf("INDENTIFIER "); return(IDENTIFIER); }
 
  /* integer constant */
-0[xX][a-fA-F0-9]+  { printf("I_CONST "); yylval.ival = atoi(yytext); return(I_CONST); }
-[0-9]+             { printf("I_CONST "); yylval.ival = atoi(yytext); return(I_CONST); }
+0[xX][a-fA-F0-9]+  { printf("I_CONST "); yylval.ival = atoi(yytext);   return(I_CONST); }
+[0-9]+             { printf("I_CONST "); yylval.ival = atoi(yytext);   return(I_CONST); }
 
  /* floating point constant */
-[0-9]+[Ee][+-]?[0-9]+              { printf("F_CONST "); yylval.fval = atof(yytext); return(F_CONST); }
-[0-9]*"."[0-9]+([Ee][+-]?[0-9]+)?  { printf("F_CONST "); yylval.fval = atof(yytext); return(F_CONST); }
-[0-9]+"."[0-9]*([Ee][+-]?[0-9]+)?  { printf("F_CONST "); yylval.fval = atof(yytext); return(F_CONST); }
+[0-9]+[Ee][+-]?[0-9]+              { printf("F_CONST "); yylval.fval = atof(yytext);  return(F_CONST); }
+[0-9]*"."[0-9]+([Ee][+-]?[0-9]+)?  { printf("F_CONST "); yylval.fval = atof(yytext);  return(F_CONST); }
+[0-9]+"."[0-9]*([Ee][+-]?[0-9]+)?  { printf("F_CONST "); yylval.fval = atof(yytext);  return(F_CONST); }
 
  /* compound assignment and modification operators */
 ">>="  { printf("RIGHT_ASSIGN "); return(RIGHT_ASSIGN); }

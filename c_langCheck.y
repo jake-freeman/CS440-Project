@@ -42,15 +42,43 @@ postfix_expression
   | postfix_expression '(' ')'
   | postfix_expression '.' IDENTIFIER
   | postfix_expression PTR_OP IDENTIFIER
-  | postfix_expression INC_OP
-  | postfix_expression DEC_OP
+  | postfix_expression INC_OP {if ($<info.type>1 == 1){
+                                                          $<info.type>$ = 1;
+                                                          $<info.ival>$ = $<info.ival>2 + 1;
+                                                        }
+                                                        if ($<info.type>1 == 2) {
+                                                           $<info.type>$ = 2;
+                                                           $<info.fval>$ = $<info.fval>2 + 1;
+                                                        } }
+  | postfix_expression DEC_OP                          {if ($<info.type>1 == 1){
+                                                          $<info.type>$ = 1;
+                                                          $<info.ival>$  = $<info.ival>2 - 1;
+                                                        }
+                                                        if ($<info.type>1 == 2) {
+                                                           $<info.type>$ = 2;
+                                                           $<info.fval>$ = $<info.fval>2 - 1;
+                                                        } }
   ;
 
 unary_expression
   : postfix_expression
   | unary_operator unary_expression
-  | INC_OP unary_expression
-  | DEC_OP unary_expression
+  | INC_OP unary_expression               {if ($<info.type>2 == 1){
+                                                          $<info.type>$ = 1;
+                                                          $<info.ival>$  = $<info.ival>2 + 1;
+                                                        }
+                                                        if ($<info.type>2 == 2) {
+                                                           $<info.type>$ = 2;
+                                                           $<info.fval>$ = $<info.fval>2 + 1;
+                                                        } }
+  | DEC_OP unary_expression               {if ($<info.type>2 == 1){
+                                                          $<info.type>$ = 1;
+                                                          $<info.ival>$  = $<info.ival>2 - 1;
+                                                        }
+                                                        if ($<info.type>2 == 2) {
+                                                           $<info.type>$ = 2;
+                                                           $<info.fval>$ = $<info.fval>2 - 1;
+                                                        } }
   ;
 
 unary_operator
@@ -74,9 +102,11 @@ multiplicative_expression
                                                       }
                                                       if ($<info.type>1 == 1 && $<info.type>3 == 2) {
                                                           yyerror("Type mismatch: multiplying int by float.");
+                                                          exit(1);
                                                       }
                                                       if ($<info.type>1 == 2 && $<info.type>3 == 1) {
                                                           yyerror("Type mismatch: multiplying float by int.");
+                                                          exit(1);
                                                       }
                                                    }
   | multiplicative_expression '/' unary_expression  {   if ($<info.type>1 == 1 && $<info.type>3 == 1){
@@ -89,9 +119,11 @@ multiplicative_expression
                                                         }
                                                         if ($<info.type>1 == 1 && $<info.type>3 == 2) {
                                                             yyerror("Type mismatch: dividing int by float.");
+                                                            exit(1);
                                                         }
                                                         if ($<info.type>1 == 2 && $<info.type>3 == 1) {
                                                             yyerror("Type mismatch: dividing float by int.");
+                                                            exit(1);
                                                         }
                                                      }
   | multiplicative_expression '%' unary_expression  { if ($<info.type>1 == 1 && $<info.type>3 == 1){
@@ -100,6 +132,7 @@ multiplicative_expression
                                                       }
                                                       if ($<info.type>1 == 2 || $<info.type>3 == 2) {
                                                           yyerror("Type mismatch: modulus operation on float.");
+                                                          exit(1);
                                                       }
                                                      }
   ;
@@ -117,10 +150,12 @@ additive_expression
                                                           }
                                                           if ($<info.type>1 == 1 && $<info.type>3 == 2) {
                                                               yyerror("Type mismatch: adding int and float.");
-                                                              
+                                                              exit(1);
+
                                                           }
                                                           if ($<info.type>1 == 2 && $<info.type>3 == 1) {
                                                               yyerror("Type mismatch: adding float and int.");
+                                                              exit(1);
                                                           }
                                                      }
   | additive_expression '-' multiplicative_expression  { if ($<info.type>1 == 1 && $<info.type>3 == 1){
@@ -133,9 +168,11 @@ additive_expression
                                                         }
                                                         if ($<info.type>1 == 1 && $<info.type>3 == 2) {
                                                             yyerror("Type mismatch: subtracting float from int.");
+                                                            exit(1);
                                                         }
                                                         if ($<info.type>1 == 2 && $<info.type>3 == 1) {
                                                             yyerror("Type mismatch: subtracting int from float.");
+                                                            exit(1);
                                                         }
                                                      }
   ;
@@ -148,41 +185,105 @@ shift_expression
 
 relational_expression
   : shift_expression
-  | relational_expression '<' shift_expression
-  | relational_expression '>' shift_expression
+  | relational_expression '<' shift_expression  {       if ($<info.type>1 == 1 && $<info.type>3 == 2) {
+                                                            yyerror("Type mismatch: relating float to int.");
+                                                            exit(1);
+                                                        }
+                                                        if ($<info.type>1 == 2 && $<info.type>3 == 1) {
+                                                            yyerror("Type mismatch: relating int to float.");
+                                                            exit(1);
+                                                        }
+                                                     }
+  | relational_expression '>' shift_expression       {       if ($<info.type>1 == 1 && $<info.type>3 == 2) {
+                                                            yyerror("Type mismatch: relating float to int.");
+                                                            exit(1);
+                                                        }
+                                                        if ($<info.type>1 == 2 && $<info.type>3 == 1) {
+                                                            yyerror("Type mismatch: relating int to float.");
+                                                            exit(1);
+                                                        }
+                                                     }
   | relational_expression LE_OP shift_expression
   | relational_expression GE_OP shift_expression
   ;
 
 equality_expression
   : relational_expression
-  | equality_expression EQ_OP relational_expression
+  | equality_expression EQ_OP relational_expression     {       if ($<info.type>1 == 1 && $<info.type>3 == 2) {
+                                                            yyerror("Type mismatch: equating float to int.");
+                                                            exit(1);
+                                                        }
+                                                        if ($<info.type>1 == 2 && $<info.type>3 == 1) {
+                                                            yyerror("Type mismatch: equating int to float.");
+                                                            exit(1);
+                                                        }
+                                                     }
   | equality_expression NE_OP relational_expression
   ;
 
 and_expression
   : equality_expression
-  | and_expression '&' equality_expression
+  | and_expression '&' equality_expression              {       if ($<info.type>1 == 1 && $<info.type>3 == 2) {
+                                                            yyerror("Type mismatch: ANDing float with int.");
+                                                            exit(1);
+                                                        }
+                                                        if ($<info.type>1 == 2 && $<info.type>3 == 1) {
+                                                            yyerror("Type mismatch: ANDing int with float.");
+                                                            exit(1);
+                                                        }
+                                                     }
   ;
 
 exclusive_or_expression
   : and_expression
-  | exclusive_or_expression '^' and_expression
+  | exclusive_or_expression '^' and_expression        {       if ($<info.type>1 == 1 && $<info.type>3 == 2) {
+                                                            yyerror("Type mismatch: XORing float with int.");
+                                                            exit(1);
+                                                        }
+                                                        if ($<info.type>1 == 2 && $<info.type>3 == 1) {
+                                                            yyerror("Type mismatch: XORing int with float.");
+                                                            exit(1);
+                                                        }
+                                                     }
   ;
 
 inclusive_or_expression
   : exclusive_or_expression
-  | inclusive_or_expression '|' exclusive_or_expression
+  | inclusive_or_expression '|' exclusive_or_expression   {       if ($<info.type>1 == 1 && $<info.type>3 == 2) {
+                                                            yyerror("Type mismatch: ORing float with int.");
+                                                            exit(1);
+                                                        }
+                                                        if ($<info.type>1 == 2 && $<info.type>3 == 1) {
+                                                            yyerror("Type mismatch: ORing int with float.");
+                                                            exit(1);
+                                                        }
+                                                     }
   ;
 
 logical_and_expression
   : inclusive_or_expression
-  | logical_and_expression AND_OP inclusive_or_expression
+  | logical_and_expression AND_OP inclusive_or_expression   {       if ($<info.type>1 == 1 && $<info.type>3 == 2) {
+                                                            yyerror("Type mismatch: ANDing float with int.");
+                                                            exit(1);
+                                                        }
+                                                        if ($<info.type>1 == 2 && $<info.type>3 == 1) {
+                                                            yyerror("Type mismatch: ANDing int with float.");
+                                                            exit(1);
+                                                        }
+                                                     }
   ;
 
 logical_or_expression
   : logical_and_expression
-  | logical_or_expression OR_OP logical_and_expression
+  | logical_or_expression OR_OP logical_and_expression    {       if ($<info.type>1 == 1 && $<info.type>3 == 2) {
+                                                            yyerror("Type mismatch: ORing float to int.");
+                                                            exit(1);
+                                                        }
+                                                        if ($<info.type>1 == 2 && $<info.type>3 == 1) {
+                                                            yyerror("Type mismatch: ORing int to float.");
+                                                            exit(1);
+                                                        }
+                                                     }
   ;
 
 conditional_expression
@@ -202,9 +303,11 @@ assignment_expression
                                                         }
                                                         if ($<info.type>1 == 1 && $<info.type>3 == 2) {
                                                             yyerror("Type mismatch: assignment float to int.");
+                                                            exit(1);
                                                         }
                                                         if ($<info.type>1 == 2 && $<info.type>3 == 1) {
                                                             yyerror("Type mismatch: assignment int to float.");
+                                                            exit(1);
                                                         }
                                                      }
   ;
@@ -234,12 +337,26 @@ constant_expression
 
 declaration
   : declaration_specifiers ';'
-  | declaration_specifiers init_declarator_list ';'
+  | declaration_specifiers init_declarator_list ';'   { if ($<info.type>1 == 1 && $<info.type>2 == 1){
+                                                          $<info.type>$ = 1;
+                                                          $<info.ival>$  = $<info.ival>2;
+                                                      }
+                                                      if ($<info.type>1 == 2 && $<info.type>3 == 2) {
+                                                           $<info.type>$ = 2;
+                                                           $<info.fval>$ = $<info.fval>2;
+                                                        }}
   ;
 
 declaration_specifiers
   : type_specifier
-  | type_specifier declaration_specifiers
+  | type_specifier declaration_specifiers { if ($<info.type>1 == 1 && $<info.type>2 == 1){
+                                                          $<info.type>$ = 1;
+                                                          $<info.ival>$  = $<info.ival>2;
+                                                      }
+                                                      if ($<info.type>1 == 2 && $<info.type>2 == 2) {
+                                                           $<info.type>$ = 2;
+                                                           $<info.fval>$ = $<info.fval>2;
+                                                        }}
   ;
 
 init_declarator_list
@@ -259,18 +376,20 @@ init_declarator
                                   }
                                   if ($<info.type>1 == 1 && $<info.type>3 == 2) {
                                         yyerror("Type mismatch: assignment float to int.");
+                                        exit(1);
                                   }
                                   if ($<info.type>1 == 2 && $<info.type>3 == 1) {
                                         yyerror("Type mismatch: assignment int to float.");
+                                        exit(1);
                                   }
                                 }
   ;
 
 type_specifier
-  : INT
-  | FLOAT
-  | SIGNED
-  | UNSIGNED
+  : INT       { $<info.type>$ = 1; }
+  | FLOAT     { $<info.type>$ = 2; }
+  | SIGNED    { $<info.type>$ = 1; }
+  | UNSIGNED  { $<info.type>$ = 1; }
   ;
 
 declarator
@@ -283,8 +402,6 @@ direct_declarator
   | '(' declarator ')'
   | direct_declarator '[' constant_expression ']'
   | direct_declarator '[' ']'
-  | direct_declarator '(' parameter_type_list ')'
-  | direct_declarator '(' identifier_list ')'
   | direct_declarator '(' ')'
   ;
 
@@ -298,45 +415,6 @@ pointer
 type_qualifier_list
   : KEY_CONST
   | type_qualifier_list KEY_CONST
-  ;
-
-
-parameter_type_list
-  : parameter_list
-  ;
-
-parameter_list
-  : parameter_declaration
-  | parameter_list ',' parameter_declaration
-  ;
-
-parameter_declaration
-  : declaration_specifiers declarator
-  | declaration_specifiers abstract_declarator
-  | declaration_specifiers
-  ;
-
-identifier_list
-  : IDENTIFIER
-  | identifier_list ',' IDENTIFIER
-  ;
-
-abstract_declarator
-  : pointer
-  | direct_abstract_declarator
-  | pointer direct_abstract_declarator
-  ;
-
-direct_abstract_declarator
-  : '(' abstract_declarator ')'
-  | '[' ']'
-  | '[' constant_expression ']'
-  | direct_abstract_declarator '[' ']'
-  | direct_abstract_declarator '[' constant_expression ']'
-  | '(' ')'
-  | '(' parameter_type_list ')'
-  | direct_abstract_declarator '(' ')'
-  | direct_abstract_declarator '(' parameter_type_list ')'
   ;
 
 initializer

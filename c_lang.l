@@ -22,8 +22,8 @@
 [a-zA-Z_]([a-zA-Z_]|[0-9])* { printf("INDENTIFIER "); return(IDENTIFIER); }
 
  /* integer constant */
-0[xX][a-fA-F0-9]+  { printf("I_CONST "); return(I_CONST); }
-[0-9]+             { printf("I_CONST "); return(I_CONST); }
+0[xX][a-fA-F0-9]+  { printf("I_CONST ");  return(I_CONST); }
+[0-9]+             { printf("I_CONST ");  return(I_CONST); }
 
  /* floating point constant */
 [0-9]+[Ee][+-]?[0-9]+              { printf("F_CONST ");  return(F_CONST); }

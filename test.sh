@@ -5,4 +5,6 @@ if [[ $# -lt 1 ]]; then
   exit 1
 fi
 
+./c_langCheck < $1
+
 ./c_lang < $1

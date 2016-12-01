@@ -2,35 +2,28 @@
   #include <stdio.h>
   #include <stdlib.h>
   #include <string.h>
-
   typedef struct node
   {
       struct node *left;
       struct node *right;
       char *token;
   } node;
-
   node *mknode(char *token, node *left, node *right);
   void printtree(node *tree);
-
   node* head;
-
   #define YYSTYPE struct node *
 %}
+
 %token IDENTIFIER I_CONST F_CONST
 %token PTR_OP INC_OP DEC_OP LEFT_OP RIGHT_OP LE_OP GE_OP EQ_OP NE_OP
 %token AND_OP OR_OP MUL_ASSIGN DIV_ASSIGN MOD_ASSIGN ADD_ASSIGN
 %token SUB_ASSIGN LEFT_ASSIGN RIGHT_ASSIGN AND_ASSIGN
 %token XOR_ASSIGN OR_ASSIGN
-
 %token TYPEDEF EXTERN STATIC AUTO REGISTER
 %token INT SIGNED UNSIGNED FLOAT KEY_CONST
-
 %token IF ELSE
-
 %nonassoc LOWER_THAN_ELSE
 %nonassoc ELSE
-
 %start translation_unit
 %%
 
@@ -204,7 +197,6 @@ type_qualifier_list
   | type_qualifier_list KEY_CONST
   ;
 
-
 initializer
   : assignment_expression { $$ = mknode( "assignment_expression", $1, NULL ); }
   | '{' initializer_list '}' { $$ = mknode( "initializer_list", $2, NULL ); }
@@ -259,9 +251,7 @@ translation_unit
   | translation_unit declaration_statement { head = ($$ = mknode( "", $1, $2 )); }
   ;
 
-
 %%
-
 node *mknode(char *token, node *left, node *right)
 {
   /* malloc the node */
@@ -277,26 +267,21 @@ node *mknode(char *token, node *left, node *right)
 void printtree(node *tree)
 {
   int i;
-
   if (tree->left || tree->right) {
     printf("(");
   }
-
   printf(" %s ", tree->token);
-
   if (tree->left) {
     printtree(tree->left);
   } if (tree->right) {
     printtree(tree->right);
   }
-
   if (tree->left || tree->right) {
     printf(")");
   }
 }
 
 extern char yytext[];
-
 void yyerror(const char *str)
 {
     fprintf(stderr,"error: %s\n",str);
