@@ -19,15 +19,15 @@ lex.yy.o: lex.yy.c y.tab.h
 y.tab.c y.tab.h: $(TARGET).y
 	$(YACC) -v $(TARGET).y
 
-	y.tab.c y.tab.h: $(TARGET2).y
-		$(YACC) -v $(TARGET2).y
+y.tab.c y.tab.h: $(TARGET2).y
+	$(YACC) -v $(TARGET2).y
 
 
 lex.yy.c: $(TARGET).l
 	$(LEX) $(TARGET).l
 
-	lex.yy.c: $(TARGET2).l
-		$(LEX) $(TARGET2).l
+lex.yy.c: $(TARGET2).l
+	$(LEX) $(TARGET2).l
 
 debug:
 	$(YACC) -v -t $(TARGET).y
@@ -46,11 +46,11 @@ run: clean
 run_debug: debug
 	./$(TARGET) < test.c
 
-		./$(TARGET2) < test.c
+	./$(TARGET2) < test.c
 
 clean:
 	-rm -f *.o lex.yy.c *.tab.*  $(TARGET) *.output
 
-		-rm -f *.o lex.yy.c *.tab.*  $(TARGET2) *.output
+	-rm -f *.o lex.yy.c *.tab.*  $(TARGET2) *.output
 
 .PHONY: clean run debug run_debug
